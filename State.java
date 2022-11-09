@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class State {
 
     long state;
@@ -19,6 +22,17 @@ public class State {
             matrix[i] = getColumn(i);
         }
         return matrix;
+    }
+    public State[] getSuccessors(int player) {
+        List<State> successors = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            State temp = new State(this.state);
+            if (!temp.isColumnFull(i)) {
+                temp.addToColumn(i, player);
+                successors.add(temp);
+            }
+        }
+        return successors.toArray(new State[0]);
     }
 
     /***
