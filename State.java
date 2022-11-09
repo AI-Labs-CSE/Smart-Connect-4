@@ -15,14 +15,27 @@ public class State {
     }
 
     public String toString() {
-        return Long.toBinaryString(state);
+        return Long.toString(state);
     }
 
     /***
      * @return 2 D array of the characters that represent the state
+     * EX this is the output the row represent the column and the column 0 in the game
+     * ryyr00
+     * rr0000
+     * yrrrr0
+     * yyy000
+     * yy0000
+     * yrrr00
+     * rrrrr0
+     *
      ***/
     public char[][] stateToMatrix(){
-        return null;
+        char[][] matrix = new char[7][];
+        for (int i = 0; i < 7; i++) {
+            matrix[i] = getColumn(i);
+        }
+        return matrix;
     }
 
     /***
@@ -30,16 +43,39 @@ public class State {
      * @param value - the value to add 0 for yellow and 1 for red
      ***/
     public void addToColumn(int column, int value){
+        if (isColumnFull(column))
+            return;
+        int length = getColumnLength(column);
+        long thisColumn = (state >> (column * 9 + 3));
+        long newColumn = (((value << length) | thisColumn) << 3) | (length + 1);
 
+        state = state & ~(0b111111111L << (column*9));
+        state = state | newColumn << (column * 9);
     }
 
     /***
-     *
+     * @param column - the column to get
+     * @return 2d array with the start and end index on the column bits
+     ***/
+    public char[] getColumn(int column){
+        int length = getColumnLength(column);
+        long thisColumn = (state >> (column * 9L + 3)); // the plus 3 to remove the size bits
+        char[] res = {'0', '0', '0', '0', '0', '0'};
+        int i = 0;
+        while (length>0){
+            res[i] = (thisColumn & 0b1) == 0 ? 'y' : 'r';
+            thisColumn = thisColumn >> 1;
+            length--;
+            i++;
+        }
+        return res;
+    }
+
+    /***
      * @param column - the column to get
      * @return the value of the column between 0 and 511 (inclusive) that represents the state of the column
      ***/
-    public long getColumn(int column){
-        column = 7 - column; //flip the column to get the correct column from the left 0 , 1 , 2 , 3 , 4 , 5 , 6 , 7
+    private long getColumnBits(int column){
         long columnPosition = 511L << (column * 9); // 511 = represents 111 111 111
         return (state & columnPosition ) >> (column * 9);
     }
@@ -48,11 +84,13 @@ public class State {
      * @param column - the column to get the number of pieces in
      * @return the number of pieces in the column
      ***/
-    public long getColumnLength(int column){
-        long columnValue = getColumn(column);
-        int lengthBits = 7 << 6; // that value represents 111 000 000
-        long length = columnValue & lengthBits;
-        return length >> 6;
+    public int getColumnLength(int column){
+        // the first 3 bits in every column represents the last place that a disk was put in
+        // ex: 010011 101 here we have 5 disks the first one is red second is red third is yellow fourth is yellow firth is red
+        // the last bit is zero but its an empty place because we knew from the first 3 bits that our size is 5
+        // to get the size we just need to extract the first 3 bits of the column
+        // to get a specific column we need to right shift by 9 * the column number we want
+        return (int)(state >> (column * 9)) & 0b111;
     }
 
     /***
@@ -60,29 +98,31 @@ public class State {
      * @return true if the column is full and false if it is not
      ***/
     public boolean isColumnFull(int column){
-        return getColumnLength(column) >= 6;
+        // since our board is 6*7 the max number of disk to be put is 6
+        if (((state >> column*9) & 0b111) >= 0b110){
+            return true;
+        }
+        return false;
     }
 
     /***
      * @return true if the state is a game over state board is full
      ***/
     public boolean isFull(){
-        for(int i = 0; i < 7; i++){
-            if(!isColumnFull(i)){
+        for (int i=0; i<7; i++){
+            if (!isColumnFull(i)){
                 return false;
             }
         }
         return true;
     }
 
-    public String columnsToString(){
+    private String columnsToString(){
 
         StringBuilder result = new StringBuilder();
         for(int i = 1; i <= 7; i++){
-            String column = Long.toBinaryString(getColumn(i));
-            for(int j= 0; j < 9-column.toString().length(); j++){
-                result.append("0");
-            }
+            String column = Long.toBinaryString(getColumnBits(i));
+            result.append("0".repeat(Math.max(0, 9 - column.toString().length())));
             result.append(column);
             result.append("\n");
         }
@@ -91,24 +131,46 @@ public class State {
         return result.toString();
     }
 
-
     public static void main(String[] args) {
-        State state = new State(999999999999999999L);
-        System.out.println(state.toString());
-        System.out.println(state.columnsToString());
+        State state = new State(0);
+        state.addToColumn(0, 1);
+        state.addToColumn(0, 0);
+        state.addToColumn(0, 0);
+        state.addToColumn(0, 1);
 
-        System.out.println(state.getColumn(7));
-        System.out.println(state.getColumn(6));
-        System.out.println(state.getColumn(5));
-        System.out.println(state.getColumnLength(7));
-        System.out.println(state.isColumnFull(7));
-        System.out.println(state.getColumnLength(6));
-        System.out.println(state.getColumnLength(5));
+        state.addToColumn(1, 1);
+        state.addToColumn(1, 1);
+        state.addToColumn(2, 0);
+        state.addToColumn(2, 1);
+        state.addToColumn(2, 1);
+        state.addToColumn(2, 1);
+        state.addToColumn(2, 1);
+        state.addToColumn(3, 0);
+        state.addToColumn(3, 0);
+        state.addToColumn(3, 0);
+        state.addToColumn(4, 0);
+        state.addToColumn(4, 0);
+        state.addToColumn(5, 0);
+        state.addToColumn(5, 1);
+        state.addToColumn(5, 1);
+        state.addToColumn(5, 1);
+        state.addToColumn(6, 1);
+        state.addToColumn(6, 1);
+        state.addToColumn(6, 1);
+        state.addToColumn(6, 1);
+        state.addToColumn(6, 1);
 
 
-
-
+        char [][] matrix = state.stateToMatrix();
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 6; j++) {
+                System.out.print(matrix[i][j]);
+            }
+            System.out.println();
+        }
 
     }
+
+
 
 }
