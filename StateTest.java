@@ -81,6 +81,19 @@ class StateTest {
         assertTrue(state.isColumnFull(0));
         assertTrue(state.isColumnFull(1));
     }
+    @Test
+    void stateToMatrix() {
+        State state = new State(0b000000011111001110L);
+        char[][] matrix = state.stateToMatrix();
+        assertArrayEquals(new char[]{'r','y','y','r','r','r'}, matrix[0]);
+        assertArrayEquals(new char[]{'y','y','y','0','0','0'}, matrix[1]);
+        assertArrayEquals(new char[]{'0','0','0','0','0','0'}, matrix[2]);
+        assertArrayEquals(new char[]{'0','0','0','0','0','0'}, matrix[3]);
+        assertArrayEquals(new char[]{'0','0','0','0','0','0'}, matrix[4]);
+        assertArrayEquals(new char[]{'0','0','0','0','0','0'}, matrix[5]);
+        assertArrayEquals(new char[]{'0','0','0','0','0','0'}, matrix[6]);
+
+    }
 
     @Test
     void isColumnFullFirstTest() {
