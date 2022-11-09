@@ -73,7 +73,7 @@ public class State {
      ***/
     public boolean isColumnFull(int column){
         // since our board is 6*7 the max number of disk to be put is 6
-        return ((state >> column * 9) & 0b111) >= 0b110;
+        return getColumnLength(column) >= 0b110;
     }
 
     /***
