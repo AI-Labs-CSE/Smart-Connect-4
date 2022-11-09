@@ -56,6 +56,16 @@ class StateTest {
 
     }
 
+    @Test
+    void getSuccessors() {
+        State state = new State(0L);
+        State[] successors = state.getSuccessors(1);
+        assertEquals(7, successors.length);
+        assertEquals(0b000001001, successors[0].state);
+        assertEquals(0b000001001000000000L, successors[1].state);
+        assertEquals(0b000001001000000000000000000L, successors[2].state);
+
+    }
 
         @Test
     void getColumnLength() {
