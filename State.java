@@ -25,15 +25,16 @@ public class State {
      * @param column - the column to add the piece to
      * @param value - the value to add 0 for yellow and 1 for red
      ***/
-    public void addToColumn(int column, int value){
+    public boolean addToColumn(int column, int value){
         if (isColumnFull(column))
-            return;
+            return false;
         int length = getColumnLength(column);
         long thisColumn = (state >> (column * 9 + 3));
         long newColumn = ((((long) value << length) | thisColumn) << 3) | (length + 1);
 
         state = state & ~(0b111111111L << (column*9));
         state = state | newColumn << (column * 9);
+        return true;
     }
 
     /***
