@@ -102,5 +102,128 @@ public class State {
         }
         return true;
     }
-
+    public int[] getScore(){
+        char[][] board = stateToMatrix();
+        int[] horzScore = horizontalScore(board);
+        int[] verticalScore = verticalScore(board);
+        int[] diagonalScore = diagonalScore(board);
+        return new int[]{horzScore[0] + verticalScore[0] + diagonalScore[0], horzScore[1] + verticalScore[1] + diagonalScore[1]};
+    }
+    private int[] diagonalScore(char[][] board){
+        int yellowScore = 0;
+        int redScore = 0;
+        int redPieces = 0;
+        int yellowPieces = 0;
+        int rowController = 3;
+        boolean contRow = true;
+        int contCol = 0;
+        int i=3;
+        int k=3;
+        int j=0;
+        int w=0;
+        while (contRow || contCol < 5) {
+            yellowPieces = 0;
+            redPieces = 0;
+            while (i<7 && k<7 && j<6 && w<6) {
+                if (board[i][j] == 'y') {
+                    yellowPieces++;
+                    if (yellowPieces == 4) {
+                        yellowPieces = 3;
+                        yellowScore++;
+                    }
+                } else {
+                    yellowPieces = 0;
+                }
+                if (board[k][w] == 'r') {
+                    redPieces++;
+                    if (redPieces == 4) {
+                        redPieces = 3;
+                        redScore++;
+                    }
+                } else {
+                    redPieces = 0;
+                }
+                i++;
+                k++;
+                j++;
+                w++;
+            }
+            if (rowController == 0){
+                contRow = false;
+                contCol++;
+            }
+            rowController = rowController > 0 ? rowController - 1 : 0;
+            i = rowController;
+            k = i;
+            j = contCol;
+            w = contCol;
+        }
+        return new int[]{yellowScore, redScore};
+    }
+    private int[] verticalScore (char[][] board){
+        int yellowScore = 0;
+        int redScore = 0;
+        int redPieces = 0;
+        int yellowPieces = 0;
+        for (int i=0, k=0; i<6 && k<6; i++, k++){
+            yellowPieces = 0;
+            redPieces = 0;
+            for (int j=0, w=0; j<7 && w<7; j++, w++){
+                if (board[j][i] == 'y'){
+                    yellowPieces++;
+                    if (yellowPieces == 4) {
+                        yellowPieces = 3;
+                        yellowScore++;
+                    }
+                }
+                else {
+                    yellowPieces = 0;
+                }
+                if (board[w][k] == 'r'){
+                    redPieces++;
+                    if (redPieces == 4){
+                        redPieces = 3;
+                        redScore++;
+                    }
+                }
+                else{
+                    redPieces = 0;
+                }
+            }
+        }
+        return new int[]{yellowScore, redScore};
+    }
+    private int[] horizontalScore (char[][] board) {
+        int yellowScore = 0;
+        int redScore = 0;
+        int redPieces = 0;
+        int yellowPieces = 0;
+        for (int i=0, k=0; i<7 && k<7; i++, k++){
+            yellowPieces = 0;
+            redPieces = 0;
+            for (int j=0, w=0; j<6 && w<6; j++, w++){
+                if (board[i][j] == 'y'){
+                    yellowPieces++;
+                    if (yellowPieces == 4) {
+                        yellowPieces = 3;
+                        yellowScore++;
+                    }
+                }
+                else {
+                    yellowPieces = 0;
+                }
+                if (board[k][w] == 'r'){
+                    redPieces++;
+                    if (redPieces == 4){
+                        redPieces = 3;
+                        redScore++;
+                    }
+                }
+                else{
+                    redPieces = 0;
+                }
+            }
+        }
+        return new int[]{yellowScore, redScore};
+    }
 }
