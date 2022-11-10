@@ -4,7 +4,7 @@ import java.util.List;
 public class State {
 
     public long state;
-    private int value;
+    private int value; // to be used while printing the tree
 
     public State(long state) {
         this.state = state;
