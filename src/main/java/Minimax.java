@@ -23,8 +23,8 @@ public class Minimax {
 
     private int value(State state, NextAgent nextAgent, int currDepth) {
         expandedNodes++;
-        if(currDepth >= maxDepth) return state.heuristic() + state.getScore();
-        if(state.isTerminal()) return state.getScore() * maxHeuristic;
+        if(currDepth >= maxDepth) return state.heuristic();
+        if(state.isTerminal()) return state.getScore(currDepth) * maxHeuristic;
         if(nextAgent == NextAgent.MAX) return maxValue(state, currDepth);
         else return minValue(state, currDepth);
     }
