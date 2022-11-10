@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-
 public class State {
 
     long state;
@@ -102,5 +101,183 @@ public class State {
         }
         return true;
     }
+    public int[] getScore(){
+        char[][] board = stateToMatrix();
+        int[] horzScore = horizontalScore(board);
+        int[] verticalScore = verticalScore(board);
+        int[] positive = positiveDiagonalScore(board);
+        int[] negative = negativeDiagonalScore(board);
+        int yellow = horzScore[0] + verticalScore[0] + positive[0] + negative[0];
+        int red = horzScore[1] + verticalScore[1] + positive[1] + negative[1];
+        return new int[]{yellow, red};
+    }
 
+    private int[] negativeDiagonalScore(char[][] board){
+        int yellowScore = 0;
+        int redScore = 0;
+        int redPieces = 0;
+        int yellowPieces = 0;
+        int colController = 3;
+        boolean contCol = true;
+        int contRow = 6;
+        int i=6;
+        int k=6;
+        int j=2;
+        int w=2;
+        while (contCol || contRow >= 0) {
+            yellowPieces = 0;
+            redPieces = 0;
+            while (i>=0 && k>=0 && j<60 && w<6) {
+                if (board[i][j] == 'y') {
+                    yellowPieces++;
+                    if (yellowPieces == 4) {
+                        yellowPieces = 3;
+                        yellowScore++;
+                    }
+                } else {
+                    yellowPieces = 0;
+                }
+                if (board[k][w] == 'r') {
+                    redPieces++;
+                    if (redPieces == 4) {
+                        redPieces = 3;
+                        redScore++;
+                    }
+                } else {
+                    redPieces = 0;
+                }
+                i--;
+                k--;
+                j++;
+                w++;
+            }
+            if (colController == 0){
+                contCol = false;
+                contRow--;
+            }
+            colController = colController > 0 ? colController - 1 : 0;
+            i = contRow;
+            k = contRow;
+            j = colController;
+            w = colController;
+        }
+        return new int[]{yellowScore, redScore};
+    }
+    private int[] positiveDiagonalScore(char[][] board){
+        int yellowScore = 0;
+        int redScore = 0;
+        int redPieces = 0;
+        int yellowPieces = 0;
+        int rowController = 3;
+        boolean contRow = true;
+        int contCol = 0;
+        int i=3;
+        int k=3;
+        int j=0;
+        int w=0;
+        while (contRow || contCol < 5) {
+            yellowPieces = 0;
+            redPieces = 0;
+            while (i<7 && k<7 && j<6 && w<6) {
+                if (board[i][j] == 'y') {
+                    yellowPieces++;
+                    if (yellowPieces == 4) {
+                        yellowPieces = 3;
+                        yellowScore++;
+                    }
+                } else {
+                    yellowPieces = 0;
+                }
+                if (board[k][w] == 'r') {
+                    redPieces++;
+                    if (redPieces == 4) {
+                        redPieces = 3;
+                        redScore++;
+                    }
+                } else {
+                    redPieces = 0;
+                }
+                i++;
+                k++;
+                j++;
+                w++;
+            }
+            if (rowController == 0){
+                contRow = false;
+                contCol++;
+            }
+            rowController = rowController > 0 ? rowController - 1 : 0;
+            i = rowController;
+            k = i;
+            j = contCol;
+            w = contCol;
+        }
+        return new int[]{yellowScore, redScore};
+    }
+    private int[] verticalScore (char[][] board){
+        int yellowScore = 0;
+        int redScore = 0;
+        int redPieces = 0;
+        int yellowPieces = 0;
+        for (int i=0, k=0; i<6 && k<6; i++, k++){
+            yellowPieces = 0;
+            redPieces = 0;
+            for (int j=0, w=0; j<7 && w<7; j++, w++){
+                if (board[j][i] == 'y'){
+                    yellowPieces++;
+                    if (yellowPieces == 4) {
+                        yellowPieces = 3;
+                        yellowScore++;
+                    }
+                }
+                else {
+                    yellowPieces = 0;
+                }
+                if (board[w][k] == 'r'){
+                    redPieces++;
+                    if (redPieces == 4){
+                        redPieces = 3;
+                        redScore++;
+                    }
+                }
+                else{
+                    redPieces = 0;
+                }
+            }
+        }
+        return new int[]{yellowScore, redScore};
+    }
+    private int[] horizontalScore (char[][] board) {
+        int yellowScore = 0;
+        int redScore = 0;
+        int redPieces = 0;
+        int yellowPieces = 0;
+        for (int i=0, k=0; i<7 && k<7; i++, k++){
+            yellowPieces = 0;
+            redPieces = 0;
+            for (int j=0, w=0; j<6 && w<6; j++, w++){
+                if (board[i][j] == 'y'){
+                    yellowPieces++;
+                    if (yellowPieces == 4) {
+                        yellowPieces = 3;
+                        yellowScore++;
+                    }
+                }
+                else {
+                    yellowPieces = 0;
+                }
+                if (board[k][w] == 'r'){
+                    redPieces++;
+                    if (redPieces == 4){
+                        redPieces = 3;
+                        redScore++;
+                    }
+                }
+                else{
+                    redPieces = 0;
+                }
+            }
+        }
+        return new int[]{yellowScore, redScore};
+    }
 }
