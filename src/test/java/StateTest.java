@@ -105,7 +105,7 @@ class StateTest {
     @Test
     void stateToMatrix() {
         State state = new State(0b000000011111001110L);
-        char[][] matrix = state.stateToMatrix();
+        char[][] matrix = state.stateToMatrix();// -100+30+35+10 = -25-30-35-25 = -115
         assertArrayEquals(new char[]{'r','y','y','r','r','r'}, matrix[0]);
         assertArrayEquals(new char[]{'y','y','y','0','0','0'}, matrix[1]);
         assertArrayEquals(new char[]{'0','0','0','0','0','0'}, matrix[2]);
@@ -113,7 +113,6 @@ class StateTest {
         assertArrayEquals(new char[]{'0','0','0','0','0','0'}, matrix[4]);
         assertArrayEquals(new char[]{'0','0','0','0','0','0'}, matrix[5]);
         assertArrayEquals(new char[]{'0','0','0','0','0','0'}, matrix[6]);
-
     }
 
     @Test
@@ -132,11 +131,11 @@ class StateTest {
     @Test
     void isFull() {
         State state = new State(999999999999999999L);
-        assertFalse(state.isFull());
+        assertFalse(state.isTerminal());
     }
     @Test
     void isFullTure() {
         State state = new State(0b1111111111111111111111111111111111111111111111111111111111111111L);
-        assertTrue(state.isFull());
+        assertTrue(state.isTerminal());
     }
 }
