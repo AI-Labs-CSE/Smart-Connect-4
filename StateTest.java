@@ -56,6 +56,27 @@ class StateTest {
 
     }
 
+    @Test
+    void getSuccessors() {
+        State state = new State(0L);
+        State[] successors = state.getSuccessors(1);
+        assertEquals(7, successors.length);
+        assertEquals(0b000001001, successors[0].state);
+        assertEquals(0b000001001000000000L, successors[1].state);
+        assertEquals(0b000001001000000000000000000L, successors[2].state);
+
+    }
+    @Test
+    void getSuccessorsStressTest() {
+        // State here is 001011101 000010011 001011110 000010001 000011110 100010110
+        State state = new State(0b001011101000010011001011110000010001000011110100010110L);
+        State[] successors = state.getSuccessors(1);
+        assertEquals(4, successors.length);
+        assertEquals(0b001011101000010011001011110000010010000011110100010110L, successors[0].state);
+        assertEquals(0b001011101001010100001011110000010001000011110100010110L, successors[1].state);
+        assertEquals(0b101011110000010011001011110000010001000011110100010110L, successors[2].state);
+        assertEquals(0b000001001001011101000010011001011110000010001000011110100010110L, successors[3].state);
+    }
 
         @Test
     void getColumnLength() {
