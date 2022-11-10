@@ -1,11 +1,11 @@
-package src.main.java;
-
 public class GameEngine {
     public static void main(String[] args) {
-        Minimax minimax = new Minimax(4);
+        Minimax minimax = new Minimax(2);
         State initialState = new State(0L);
-        System.out.println(minimax.value(initialState, NextAgent.MAX, 0));
-        System.out.println(minimax.getNextState(initialState).toString());
+        long[] info = minimax.getInfo(initialState);
+        System.out.println("time taken: " + info[0]);
+        System.out.println("nodes expanded: " + info[1]);
+        System.out.println("next play: " + minimax.getNextState(initialState).toString());
         minimax.printGameTree(initialState);
     }
 }

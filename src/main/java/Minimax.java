@@ -1,21 +1,30 @@
-package src.main.java;
-
 import java.util.HashMap;
 
 public class Minimax {
-    private int maxDepth;
+    private final int maxDepth;
+    private int expandedNodes;
+    private final int maxHeuristic = 630;
     HashMap<State, State[]> actionMap; // parent -> child
     HashMap<State, State> optimalMap; // parent -> child
 
     public Minimax(int maxDepth) {
         this.maxDepth = maxDepth;
+        expandedNodes = 0;
         actionMap = new HashMap<>();
         optimalMap = new HashMap<>();
     }
 
-    public int value(State state, NextAgent nextAgent, int currDepth) {
-        if(currDepth >= maxDepth) return state.heuristic();
-        if(state.isTerminal()) return state.getScore();
+    public long[] getInfo(State initialState) {
+        long start = System.currentTimeMillis();
+        value(initialState, NextAgent.MAX, 0);
+        long end = System.currentTimeMillis();
+        return new long[]{end - start, expandedNodes};
+    }
+
+    private int value(State state, NextAgent nextAgent, int currDepth) {
+        expandedNodes++;
+        if(currDepth >= maxDepth) return state.heuristic() + state.getScore();
+        if(state.isTerminal()) return state.getScore() * maxHeuristic;
         if(nextAgent == NextAgent.MAX) return maxValue(state, currDepth);
         else return minValue(state, currDepth);
     }
@@ -33,6 +42,7 @@ public class Minimax {
             }
         }
         optimalMap.put(state, successors[optimalStateIdx]);
+        state.setValue(score);
         return score;
     }
 
@@ -49,6 +59,7 @@ public class Minimax {
             }
         }
         optimalMap.put(state, successors[optimalStateIdx]);
+        state.setValue(score);
         return score;
     }
 

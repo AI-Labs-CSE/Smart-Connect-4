@@ -1,11 +1,10 @@
-package src.main.java;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class State {
 
     public long state;
+    private int value;
 
     public State(long state) {
         this.state = state;
@@ -13,6 +12,14 @@ public class State {
 
     public String toString() {
         return Long.toBinaryString(state);
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
     }
 
     /***
@@ -106,11 +113,33 @@ public class State {
         return true;
     }
 
-    private boolean isPossibleNextMove(int column, int row, char[][] matrix){
-        if (row == 0)
-            return true;
-        return matrix[column][row - 1] != '0';
+    public int heuristic() {
+        int score = 0;
+        char[][] matrix = stateToMatrix();
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (matrix [i][j] != '0'){
+                    score += cellPower(i, j, matrix);
+                }
+            }
+        }
+        return score;
     }
+
+    private int cellPower(int i, int j, char[][] matrix){
+        int res = 0;
+        int[][] possibleMoves = {{1,0}, {0,1}, {1,1}, {1,-1}};
+        for (int[] move : possibleMoves){
+            int k = i + move[0];
+            int l = j + move[1];
+            // here we will add the power of the cell if there is possible index to avoid -1 index exception
+            if (k >= 0 && k < 7 && l >= 0 && l < 6){
+                res += cellPowerCalculation(i, j, k, l, matrix);
+            }
+        }
+        return res;
+    }
+
     private int cellPowerCalculation(int i, int j, int k, int l, char[][] matrix){
         int res = 0;
         if (matrix[i][j] == 'r' && matrix[k][l] == 'r'){
@@ -135,30 +164,10 @@ public class State {
         return res;
     }
 
-    private int cellPower(int i, int j, char[][] matrix){
-        int res = 0;
-        int[][] possibleMoves = {{1,0}, {0,1}, {1,1}, {1,-1}};
-        for (int[] move : possibleMoves){
-            int k = i + move[0];
-            int l = j + move[1];
-            // here we will add the power of the cell if there is possible index to avoid -1 index exception
-            if (k >= 0 && k < 7 && l >= 0 && l < 6){
-                res += cellPowerCalculation(i, j, k, l, matrix);
-            }
-        }
-        return res;
-    }
-    public int heuristic() {
-        int score = 0;
-        char[][] matrix = stateToMatrix();
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 6; j++) {
-                if (matrix [i][j] != '0'){
-                    score += cellPower(i, j, matrix);
-                }
-            }
-        }
-        return score;
+    private boolean isPossibleNextMove(int column, int row, char[][] matrix){
+        if (row == 0)
+            return true;
+        return matrix[column][row - 1] != '0';
     }
 
     public int getScore() {

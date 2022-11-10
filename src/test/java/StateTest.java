@@ -1,7 +1,4 @@
-package src.test.java;
-
 import org.junit.jupiter.api.Test;
-import src.main.java.State;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,6 +10,7 @@ class StateTest {
         assertArrayEquals(new char[]{'y','y','y','0','0','0'}, state.getColumn(1));
         assertArrayEquals(new char[]{'r','y','y','r','r','r'}, state.getColumn(0));
     }
+
     @Test
     void getColumnFirstTest() {
         // State here is 111011101 111010111 111011101 111010111 111011101 100010111
@@ -55,8 +53,6 @@ class StateTest {
         assertArrayEquals(new char[]{'r','y','0','0','0','0'}, state.getColumn(4));
         assertArrayEquals(new char[]{'r','y','0','0','0','0'}, state.getColumn(5));
         assertArrayEquals(new char[]{'r','y','0','0','0','0'}, state.getColumn(6));
-
-
     }
 
     @Test
@@ -67,8 +63,8 @@ class StateTest {
         assertEquals(0b000001001, successors[0].state);
         assertEquals(0b000001001000000000L, successors[1].state);
         assertEquals(0b000001001000000000000000000L, successors[2].state);
-
     }
+
     @Test
     void getSuccessorsStressTest() {
         // State here is 001011101 000010011 001011110 000010001 000011110 100010110
@@ -81,12 +77,13 @@ class StateTest {
         assertEquals(0b000001001001011101000010011001011110000010001000011110100010110L, successors[3].state);
     }
 
-        @Test
+    @Test
     void getColumnLength() {
         State state = new State(999999999999999999L);
         assertEquals(7, state.getColumnLength(0));
         assertEquals(7, state.getColumnLength(1));
     }
+
     @Test
     void getColumnLengthFirstTest() {
         // State here is 101011101 011010111 001011101 111010111 110011101 100010111
@@ -99,12 +96,14 @@ class StateTest {
         assertEquals(5, state.getColumnLength(5));
         assertEquals(0, state.getColumnLength(6));
     }
+
     @Test
     void isColumnFull() {
         State state = new State(999999999999999999L);
         assertTrue(state.isColumnFull(0));
         assertTrue(state.isColumnFull(1));
     }
+
     @Test
     void stateToMatrix() {
         State state = new State(0b000000011111001110L);
@@ -142,9 +141,11 @@ class StateTest {
         State state = new State(999999999999999999L);
         assertFalse(state.isTerminal());
     }
+
     @Test
     void isFullTure() {
         State state = new State(0b1111111111111111111111111111111111111111111111111111111111111111L);
         assertTrue(state.isTerminal());
     }
+
 }
