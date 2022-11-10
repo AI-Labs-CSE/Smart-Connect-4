@@ -1,3 +1,5 @@
+package src.main.java;
+
 public class GameEngine {
     public static void main(String[] args) {
         Minimax minimax = new Minimax(4);

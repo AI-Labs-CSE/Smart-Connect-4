@@ -1,4 +1,7 @@
+package src.test.java;
+
 import org.junit.jupiter.api.Test;
+import src.main.java.State;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -126,6 +129,12 @@ class StateTest {
         assertTrue(state.isColumnFull(4));
         assertFalse(state.isColumnFull(5));
         assertFalse(state.isColumnFull(1));
+    }
+
+    @Test
+    void heuristic() {
+        State state = new State(0b000000011111001110L);
+        assertEquals(-115, state.heuristic());
     }
 
     @Test
