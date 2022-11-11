@@ -26,11 +26,11 @@ public class GUIController {
     public void applyMove(int columnNum){
         if (columnNum > 6)
             return;
-        if (currentState.addToColumn(columnNum, 1)) {
+        if (currentState.addToColumn(columnNum, 0)) {
             updateScore();
             updateBoard();
             guiView.frame.setVisible(true);
-            long info[] = searchAlgorithm.getInfo(currentState);
+            long[] info = searchAlgorithm.getInfo(currentState);
             currentState = searchAlgorithm.getNextState(currentState);
             updateScore();
             updateBoard();

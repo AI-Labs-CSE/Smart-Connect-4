@@ -170,12 +170,9 @@ public class State {
         return matrix[column][row - 1] != '0';
     }
 
-    /**
-     * Returns the score of red if the depth is even else returns yellow score
-     * */
-    public int getScore(int depth) {
+    public int getScoreDiff() {
         int[] score = getScore();
-        return depth % 2 == 0 ? score[1] : score[0];
+        return score[1] - score[0];
     }
 
     public int[] getScore() {
