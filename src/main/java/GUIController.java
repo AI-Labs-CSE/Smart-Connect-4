@@ -12,8 +12,8 @@ public class GUIController {
 
     public GUIController(GUIView guiView, int maxDepth, boolean withPruning){
         try{
-            this.redCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\java\\RedCircleImg.png")));
-            this.yellowCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\java\\YellowCircleImg.png")));
+            this.redCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\resources\\RedCircleImg.png")));
+            this.yellowCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\resources\\YellowCircleImg.png")));
         }
         catch (Exception ignored){}
         this.guiView = guiView;

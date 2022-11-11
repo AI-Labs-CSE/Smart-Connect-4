@@ -67,7 +67,7 @@ public class GUIView {
 
     void buildBoard(){
         try {
-            ImageIcon whiteCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\java\\WhiteCircleImg.png")));
+            ImageIcon whiteCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\resources\\WhiteCircleImg.png")));
             for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 7; j++) {
                     JLabel tempLabel = new JLabel(whiteCircleImg);
