@@ -1,6 +1,6 @@
 import java.util.HashMap;
 
-public class Minimax {
+public class Minimax implements SearchAlgorithm {
     private final int maxDepth;
     private int expandedNodes;
     private final int maxHeuristic = 630;
@@ -15,6 +15,7 @@ public class Minimax {
     }
 
     public long[] getInfo(State initialState) {
+        expandedNodes = 0;
         long start = System.currentTimeMillis();
         value(initialState, NextAgent.MAX, 0);
         long end = System.currentTimeMillis();

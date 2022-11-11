@@ -178,7 +178,7 @@ public class State {
         return depth % 2 == 0 ? score[1] : score[0];
     }
 
-    private int[] getScore() {
+    public int[] getScore() {
         char[][] board = stateToMatrix();
         int[] horzScore = horizontalScore(board);
         int[] verticalScore = verticalScore(board);
