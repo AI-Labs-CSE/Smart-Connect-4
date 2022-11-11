@@ -7,39 +7,31 @@ import javax.swing.border.Border;
 
 public class GUIView {
 
+    public final Border border = BorderFactory.createLineBorder(Color.BLACK);
+    public final JFrame frame = new JFrame();
+    public final JLabel playerScoreLabel = new JLabel("Player Score: 0", JLabel.CENTER);
+    public final JLabel computerScoreLabel = new JLabel("Computer Score: 0", JLabel.CENTER);
+    public final JPanel boardPanel = new JPanel(new GridLayout(6, 7));
+    public final JLabel timeTakenLabel = new JLabel("Time Taken(ms): ");
+    public final JLabel nodesExpandedLabel = new JLabel("Nodes Expanded: ");
+
+
+    private GUIController guiController;
     private final String maxDepthDefaultText = "Enter Max Search Depth and Press Start";
     private final String columnDefaultText = "Enter Column Number and Press Enter";
-    Border border = BorderFactory.createLineBorder(Color.BLACK);
-
-    GUIController guiController = new GUIController();
-    Utilities utilities = new Utilities();
-
-    JFrame frame = new JFrame();
-
-    JPanel scorePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 250, 5));
-    JLabel playerScoreLabel = new JLabel("Player Score: ", JLabel.CENTER);
-    JLabel computerScoreLabel = new JLabel("Computer Score: ", JLabel.CENTER);
-
-    JPanel boardPanel = new JPanel(new GridLayout(6, 7));
-
-    JPanel southPanel = new JPanel();
-    JPanel columnsNumPanel = new JPanel(new GridLayout(1, 7));
-    JPanel optionsPanel = new JPanel();
-
-    ButtonGroup pruningRadioGroup = new ButtonGroup();
-    JRadioButton withoutPruningRadio = new JRadioButton("Without Pruning", true);
-    JRadioButton withPruningRadio = new JRadioButton("With Alpha Beta Pruning", false);
-
-    JTextField maxDepthInput = new JTextField(maxDepthDefaultText);
-
-    JTextField columnInput = new JTextField(columnDefaultText);
-
-    JButton startButton = new JButton("Start");
-
-    boolean withPruning = false;
-    String maxSearchDepth = "";
+    private final JPanel southPanel = new JPanel();
+    private final JPanel optionsPanel = new JPanel();
+    private final JRadioButton withPruningRadio = new JRadioButton("With Alpha Beta Pruning", false);
+    private final JTextField maxDepthInput = new JTextField(maxDepthDefaultText);
+    private final JTextField columnInput = new JTextField(columnDefaultText);
+    private final JButton startButton = new JButton("Start");
 
     void prepareGUI(){
+        JPanel scorePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 250, 5));
+        JPanel columnsNumPanel = new JPanel(new GridLayout(1, 7));
+        ButtonGroup pruningRadioGroup = new ButtonGroup();
+        JRadioButton withoutPruningRadio = new JRadioButton("Without Pruning", true);
+
         scorePanel.add(playerScoreLabel);
         scorePanel.add(computerScoreLabel);
 
@@ -75,7 +67,7 @@ public class GUIView {
 
     void buildBoard(){
         try {
-            ImageIcon whiteCircleImg = new ImageIcon(ImageIO.read(new File(".\\WhiteCircleImg.png")));
+            ImageIcon whiteCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\java\\WhiteCircleImg.png")));
             for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 7; j++) {
                     JLabel tempLabel = new JLabel(whiteCircleImg);
@@ -91,8 +83,9 @@ public class GUIView {
         applyDefaultTextListener(columnInput, columnDefaultText);
 
         columnInput.addActionListener(e -> {
+            Utilities utilities = new Utilities();
             if (utilities.isPositiveInt(e.getActionCommand())){
-                guiController.applyMove(e.getActionCommand());
+                guiController.applyMove(Integer.parseInt(e.getActionCommand()));
             }
             columnInput.setText(columnDefaultText);
             columnInput.setFocusable(false);
@@ -100,14 +93,18 @@ public class GUIView {
         });
 
         startButton.addActionListener(e -> {
-            maxSearchDepth = maxDepthInput.getText();
-            if (!utilities.isPositiveInt(maxSearchDepth)){
+            String maxSearchDepth = maxDepthInput.getText();
+            Utilities utilities = new Utilities();
+            if (!utilities.isPositiveInt(maxSearchDepth) || maxSearchDepth.charAt(0) == '0'){
                 maxDepthInput.setText(maxDepthDefaultText);
                 return;
             }
-            withPruning = withPruningRadio.isSelected();
+            boolean withPruning = withPruningRadio.isSelected();
+            guiController = new GUIController(this, Integer.parseInt(maxSearchDepth), withPruning);
             southPanel.remove(optionsPanel);
             southPanel.add(columnInput);
+            southPanel.add(timeTakenLabel);
+            southPanel.add(nodesExpandedLabel);
             frame.setVisible(true);
         });
     }

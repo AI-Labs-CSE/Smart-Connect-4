@@ -5,7 +5,7 @@ public class Utilities {
             return false;
         try{
             int val = Integer.parseInt(input);
-            return val > 0;
+            return val >= 0;
         }catch (Exception ignored){
             return false;
         }

@@ -1,6 +1,6 @@
 import java.util.HashMap;
 
-public class MiniMaxPruning {
+public class MiniMaxPruning implements SearchAlgorithm {
 	private final int maxDepth;
     private int expandedNodes;
     private final int maxHeuristic = 630;
@@ -14,6 +14,7 @@ public class MiniMaxPruning {
         optimalMap = new HashMap<>();
     }
     public long[] getInfo(State initialState) {
+        expandedNodes = 0;
         long start = System.currentTimeMillis();
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
