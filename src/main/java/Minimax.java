@@ -1,9 +1,10 @@
 import java.util.HashMap;
 
 public class Minimax implements SearchAlgorithm {
+
     private final int maxDepth;
     private int expandedNodes;
-    private final int maxHeuristic = 630;
+    private final int MAXHEURISTIC = 630;
     HashMap<State, State[]> actionMap; // parent -> child
     HashMap<State, State> optimalMap; // parent -> child
 
@@ -22,17 +23,21 @@ public class Minimax implements SearchAlgorithm {
         return new long[]{end - start, expandedNodes};
     }
 
+    public State getNextState(State initialState) {
+        return optimalMap.get(initialState);
+    }
+
     private int value(State state, NextAgent nextAgent, int currDepth) {
         expandedNodes++;
-        if(currDepth >= maxDepth) return state.heuristic();
-        if(state.isTerminal()) return state.getScore(currDepth) * maxHeuristic;
+        if(currDepth >= maxDepth) return state.heuristic() + state.getScoreDiff() * MAXHEURISTIC;
+        if(state.isTerminal()) return state.getScoreDiff();
         if(nextAgent == NextAgent.MAX) return maxValue(state, currDepth);
         else return minValue(state, currDepth);
     }
 
-    private int maxValue(State state, int currDepth) {
+    private int maxValue(State state, int currDepth) {// odd depth with max agent
         int score = Integer.MIN_VALUE;
-        State[] successors = state.getSuccessors(0);
+        State[] successors = state.getSuccessors(1);
         actionMap.put(state, successors);
         int optimalStateIdx = 0;
         for(int i = 0; i < successors.length; i++) {
@@ -44,12 +49,13 @@ public class Minimax implements SearchAlgorithm {
         }
         optimalMap.put(state, successors[optimalStateIdx]);
         state.setValue(score);
+        System.out.println(state + " , maxValue: " + score + ", depth: " + currDepth);
         return score;
     }
 
-    private int minValue(State state, int currDepth) {
+    private int minValue(State state, int currDepth) {// even depth with MIN agent
         int score = Integer.MAX_VALUE;
-        State[] successors = state.getSuccessors(1);
+        State[] successors = state.getSuccessors(0);
         actionMap.put(state, successors);
         int optimalStateIdx = 0;
         for(int i = 0; i < successors.length; i++) {
@@ -61,6 +67,7 @@ public class Minimax implements SearchAlgorithm {
         }
         optimalMap.put(state, successors[optimalStateIdx]);
         state.setValue(score);
+        System.out.println(state + " , minValue: " + score + ", depth: " + currDepth);
         return score;
     }
 
@@ -85,10 +92,6 @@ public class Minimax implements SearchAlgorithm {
             System.out.print(s.toString() + "\t");
         for (State s: successors)
             printSuccessors(s);
-    }
-
-    public State getNextState(State initialState) {
-        return optimalMap.get(initialState);
     }
 
 }

@@ -3,7 +3,7 @@ import java.util.HashMap;
 public class MiniMaxPruning implements SearchAlgorithm {
 	private final int maxDepth;
     private int expandedNodes;
-    private final int maxHeuristic = 630;
+    private final int MAXHEURISTIC = 630;
     HashMap<State, State[]> actionMap;
     HashMap<State, State> optimalMap;
     
@@ -13,6 +13,7 @@ public class MiniMaxPruning implements SearchAlgorithm {
         actionMap = new HashMap<>();
         optimalMap = new HashMap<>();
     }
+
     public long[] getInfo(State initialState) {
         expandedNodes = 0;
         long start = System.currentTimeMillis();
@@ -22,17 +23,22 @@ public class MiniMaxPruning implements SearchAlgorithm {
         long end = System.currentTimeMillis();
         return new long[]{end - start, expandedNodes};
     }
+
+    public State getNextState(State initialState) {
+        return optimalMap.get(initialState);
+    }
+
     private int value(State state, NextAgent nextAgent, int currDepth, int alpha, int beta) {
         expandedNodes++;
-        if(currDepth >= maxDepth) return state.heuristic();
-        if(state.isTerminal()) return state.getScore(currDepth) * maxHeuristic;
+        if(currDepth >= maxDepth) return state.heuristic() + state.getScoreDiff() * MAXHEURISTIC;
+        if(state.isTerminal()) return state.getScoreDiff();
         if(nextAgent == NextAgent.MAX) return maxValue(state, currDepth, alpha, beta);
         else return minValue(state, currDepth, alpha, beta);
     }
     
     private int maxValue(State state, int currDepth, int alpha, int beta) {
     	int val = Integer.MIN_VALUE;
-    	State[] succ = state.getSuccessors(0);
+    	State[] succ = state.getSuccessors(1);
     	int optimalStateIdx = 0;
     	actionMap.put(state, succ);
     	for (int i=0; i<succ.length; i++) {
@@ -53,7 +59,7 @@ public class MiniMaxPruning implements SearchAlgorithm {
     
     private int minValue(State state, int currDepth, int alpha, int beta) {
     	int val = Integer.MAX_VALUE;
-    	State[] succ = state.getSuccessors(1);
+    	State[] succ = state.getSuccessors(0);
     	int optimalStateIdx = 0;
     	actionMap.put(state, succ);
     	for (int i=0; i<succ.length; i++) {
@@ -71,6 +77,7 @@ public class MiniMaxPruning implements SearchAlgorithm {
         state.setValue(val);
     	return val;
     }
+
     public HashMap<State, State> getOptimalPath() {
         return optimalMap;
     }
@@ -94,7 +101,5 @@ public class MiniMaxPruning implements SearchAlgorithm {
             printSuccessors(s);
     }
 
-    public State getNextState(State initialState) {
-        return optimalMap.get(initialState);
-    }
+
 }
