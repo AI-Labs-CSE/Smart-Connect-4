@@ -7,6 +7,7 @@ import javax.swing.border.Border;
 
 public class GUIView {
 
+    // global and local variables to be used generating, and managing the gui
     public final Border border = BorderFactory.createLineBorder(Color.BLACK);
     public final JFrame frame = new JFrame();
     public final JLabel playerScoreLabel = new JLabel("Player Score: 0", JLabel.CENTER);
@@ -14,7 +15,6 @@ public class GUIView {
     public final JPanel boardPanel = new JPanel(new GridLayout(6, 7));
     public final JLabel timeTakenLabel = new JLabel("Time Taken(ms): ");
     public final JLabel nodesExpandedLabel = new JLabel("Nodes Expanded: ");
-
 
     private GUIController guiController;
     private final String maxDepthDefaultText = "Enter Max Search Depth and Press Start";
@@ -25,7 +25,9 @@ public class GUIView {
     private final JTextField maxDepthInput = new JTextField(maxDepthDefaultText);
     private final JTextField columnInput = new JTextField(columnDefaultText);
     private final JButton startButton = new JButton("Start");
+    private final JButton showTreeButton = new JButton("Show Last Game Tree");
 
+    // compose, initialise ui elements, and attach its listeners
     void prepareGUI(){
         JPanel scorePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 250, 5));
         JPanel columnsNumPanel = new JPanel(new GridLayout(1, 7));
@@ -65,6 +67,7 @@ public class GUIView {
         attachListeners();
     }
 
+    // initialize the board to be empty with white circles
     void buildBoard(){
         try {
             ImageIcon whiteCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\resources\\WhiteCircleImg.png")));
@@ -78,6 +81,7 @@ public class GUIView {
         }catch (Exception ignored){}
     }
 
+    // attach the listeners to handle ui actions, taking input, executing action, and swapping ui views
     void attachListeners(){
         applyDefaultTextListener(maxDepthInput, maxDepthDefaultText);
         applyDefaultTextListener(columnInput, columnDefaultText);
@@ -105,22 +109,28 @@ public class GUIView {
             southPanel.add(columnInput);
             southPanel.add(timeTakenLabel);
             southPanel.add(nodesExpandedLabel);
+            southPanel.add(showTreeButton);
             frame.setVisible(true);
+        });
+
+        showTreeButton.addActionListener(e -> {
+            guiController.showLastGameTree();
         });
     }
 
-    void applyDefaultTextListener(JTextField jTextField, String defaultTest){
+    // listeners to hande text input fields' transitions of default hints
+    void applyDefaultTextListener(JTextField jTextField, String defaultText){
         jTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (jTextField.getText().equals(defaultTest)) {
+                if (jTextField.getText().equals(defaultText)) {
                     jTextField.setText("");
                 }
             }
             @Override
             public void focusLost(FocusEvent e) {
                 if (jTextField.getText().isEmpty()) {
-                    jTextField.setText(defaultTest);
+                    jTextField.setText(defaultText);
                 }
             }
         });
