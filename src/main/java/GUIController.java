@@ -5,6 +5,7 @@ import java.io.File;
 public class GUIController {
 
     private State currentState = new State(0L);
+    private final TreeVisualizer treeVisualizer = new TreeVisualizer();
     private final SearchAlgorithm searchAlgorithm;
     private final GUIView guiView;
     private ImageIcon redCircleImg;
@@ -31,6 +32,7 @@ public class GUIController {
             updateBoard();
             guiView.frame.setVisible(true);
             long[] info = searchAlgorithm.getInfo(currentState);
+            treeVisualizer.drawMinimaxTree(searchAlgorithm.getGameTree(), currentState);
             currentState = searchAlgorithm.getNextState(currentState);
             updateScore();
             updateBoard();
