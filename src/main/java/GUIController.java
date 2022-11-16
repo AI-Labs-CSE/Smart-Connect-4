@@ -5,6 +5,8 @@ import java.io.File;
 public class GUIController {
 
     private State currentState = new State(0L);
+    private State oldState = currentState;
+    private final TreeVisualizer treeVisualizer = new TreeVisualizer();
     private final SearchAlgorithm searchAlgorithm;
     private final GUIView guiView;
     private ImageIcon redCircleImg;
@@ -23,14 +25,14 @@ public class GUIController {
             searchAlgorithm = new Minimax(maxDepth);
     }
 
+    // apply the user move, if it was valid start the computer search algorithm, save the old state root, so we can visualise the tree
+    // update the board and the score according to the new state after the computer turn
     public void applyMove(int columnNum){
         if (columnNum > 6)
             return;
         if (currentState.addToColumn(columnNum, 0)) {
-            updateScore();
-            updateBoard();
-            guiView.frame.setVisible(true);
             long[] info = searchAlgorithm.getInfo(currentState);
+            oldState = currentState;
             currentState = searchAlgorithm.getNextState(currentState);
             updateScore();
             updateBoard();
@@ -40,12 +42,14 @@ public class GUIController {
         }
     }
 
+    // get the score of the current state for both user and computer, update the score labels accordingly
     void updateScore(){
         int[] score = currentState.getScore();
-        guiView.computerScoreLabel.setText("Computer Score: " + score[0]);
-        guiView.playerScoreLabel.setText("Player Score: " + score[1]);
+        guiView.computerScoreLabel.setText("Computer Score: " + score[1]);
+        guiView.playerScoreLabel.setText("Player Score: " + score[0]);
     }
 
+    // iterate over the current state, updating the board colors accordingly
     void updateBoard(){
         char[][] newBoard = currentState.stateToMatrix();
         for (int column = 0; column < 7; column++)
@@ -57,6 +61,10 @@ public class GUIController {
                     ((JLabel)guiView.boardPanel.getComponent((5 - row) * 7 + column)).setIcon(yellowCircleImg);
             }
         }
+    }
+
+    void showLastGameTree(){
+        treeVisualizer.drawMinimaxTree(searchAlgorithm.getGameTree(), oldState);
     }
 
 }
