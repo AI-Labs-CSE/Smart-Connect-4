@@ -4,7 +4,7 @@ import java.util.List;
 public class State {
 
     public long state;
-    private int value; // to be used while printing the tree
+    private int value; // to be used while visualizing the tree
 
     public State(long state) {
         this.state = state;
@@ -38,7 +38,7 @@ public class State {
      ***/
     public char[] getColumn(int column){
         int length = getColumnLength(column);
-        long thisColumn = (state >> (column * 9L + 3)); // the plus 3 to remove the size bits
+        long thisColumn = (state >> (column * 9L + 3)); // plus 3 to remove the size bits
         char[] res = {'0', '0', '0', '0', '0', '0'};
         int i = 0;
         while (length>0){
@@ -56,14 +56,20 @@ public class State {
      ***/
     public int getColumnLength(int column){
         /* the first 3 bits in every column represents the last place that a disk was put in
-           ex: 010011101 here we have 5 disks the first one is red second is red third is yellow fourth is yellow fifth is red
-           the last bit is zero, but it's an empty place because we knew from the first 3 bits that our size is 5
+           ex: 010011101 here we have 5 disks the first one is red second is red third is yellow
+           fourth is yellow fifth is red the last bit is zero, but it's an empty place because
+           we knew from the first 3 bits that our size is 5.
            to get the size we just need to extract the first 3 bits of the column
            to get a specific column we need to right shift by 9 * the column number we want
          */
         return (int)(state >> (column * 9)) & 0b111;
     }
 
+    /**
+     * @param turn specifies whether it's the MAX or MIN agent
+     *             turn = 1 for MAX agent and 0 for MIN agent
+     * @return successors states for the current state
+     * */
     public State[] getSuccessors(int turn) {
         List<State> successors = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
@@ -113,6 +119,9 @@ public class State {
         return true;
     }
 
+    /**
+     * @return the expected value of the current game state
+     * */
     public int heuristic() {
         int score = 0;
         char[][] matrix = stateToMatrix();
@@ -132,7 +141,7 @@ public class State {
         for (int[] move : possibleMoves){
             int k = i + move[0];
             int l = j + move[1];
-            // here we will add the power of the cell if there is possible index to avoid -1 index exception
+            // add the power of the cell if there is possible index to avoid -1 index exception
             if (k >= 0 && k < 7 && l >= 0 && l < 6){
                 res += cellPowerCalculation(i, j, k, l, matrix);
             }
@@ -170,11 +179,17 @@ public class State {
         return matrix[column][row - 1] != '0';
     }
 
+    /**
+     * @return the MAX agent score minus the player score which is the MIN agent
+     * */
     public int getScoreDiff() {
         int[] score = getScore();
         return score[1] - score[0];
     }
 
+    /**
+     * @return 2d array of scores. MAX agent score is at index 0 and player score is at index 1
+     * */
     public int[] getScore() {
         char[][] board = stateToMatrix();
         int[] horzScore = horizontalScore(board);
@@ -237,6 +252,7 @@ public class State {
         }
         return new int[]{yellowScore, redScore};
     }
+
     private int[] positiveDiagonalScore(char[][] board){
         int yellowScore = 0;
         int redScore = 0;

@@ -14,6 +14,11 @@ public class MiniMaxPruning implements SearchAlgorithm {
         optimalMap = new HashMap<>();
     }
 
+    /**
+     * @param initialState: The current game state to start with
+     * @return long[] that contains the taken time to define the next state and its value
+     * using minimax with alpha beta pruning, and the number of expanded nodes
+     * */
     public long[] getInfo(State initialState) {
         expandedNodes = 0;
         long start = System.currentTimeMillis();
@@ -24,10 +29,22 @@ public class MiniMaxPruning implements SearchAlgorithm {
         return new long[]{end - start, expandedNodes};
     }
 
+    /**
+     * @param initialState: The current game state to start with
+     * @return the next optimal state starting with given initialState
+     * */
     public State getNextState(State initialState) {
         return optimalMap.get(initialState);
     }
 
+    /**
+     * @param state: The current game state
+     * @param nextAgent: specifies MIN or MAX agent turn
+     * @param currDepth: represents the current game depth
+     * @param alpha the max value for the MAX agent can reach. set initially to -infinity
+     * @param beta the min value for the MIN agent can reach. set initially to infinity
+     * @return the expected game value starting with given state
+     * */
     private int value(State state, NextAgent nextAgent, int currDepth, int alpha, int beta) {
         expandedNodes++;
         if(currDepth >= maxDepth) return state.heuristic() + state.getScoreDiff() * MAXHEURISTIC;
@@ -35,12 +52,16 @@ public class MiniMaxPruning implements SearchAlgorithm {
         if(nextAgent == NextAgent.MAX) return maxValue(state, currDepth, alpha, beta);
         else return minValue(state, currDepth, alpha, beta);
     }
-    
+
+    /**
+     * @return tha max value for tha MAX agent can get using alpha beta pruning
+     * by selecting the max value from current state successors
+     * */
     private int maxValue(State state, int currDepth, int alpha, int beta) {
     	int val = Integer.MIN_VALUE;
     	State[] succ = state.getSuccessors(1);
-    	int optimalStateIdx = 0;
-    	actionMap.put(state, succ);
+        actionMap.put(state, succ);
+        int optimalStateIdx = 0;
     	for (int i=0; i<succ.length; i++) {
     		int currentVal = value(succ[i], NextAgent.MIN, currDepth+1, alpha, beta);
     		if (val < currentVal) {
@@ -48,6 +69,7 @@ public class MiniMaxPruning implements SearchAlgorithm {
     			optimalStateIdx = i;
     		}
     		alpha = Math.max(alpha, val);
+            // detects that pruning should happen
     		if (val >= beta) {
     			break;
     		}
@@ -56,19 +78,24 @@ public class MiniMaxPruning implements SearchAlgorithm {
         state.setValue(val);
     	return val;
     }
-    
+
+    /**
+     * @return tha min value for the MIN agent can get using alpha beta pruning
+     * by selecting the min value from current state successors
+     * */
     private int minValue(State state, int currDepth, int alpha, int beta) {
     	int val = Integer.MAX_VALUE;
     	State[] succ = state.getSuccessors(0);
-    	int optimalStateIdx = 0;
     	actionMap.put(state, succ);
-    	for (int i=0; i<succ.length; i++) {
+        int optimalStateIdx = 0;
+        for (int i=0; i<succ.length; i++) {
     		int currentVal = value(succ[i], NextAgent.MAX, currDepth+1, alpha, beta);
     		if (val > currentVal) {
     			val = currentVal;
     			optimalStateIdx = i;
     		}
     		beta = Math.min(beta, val);
+            // detects that pruning should happen
     		if (val <= alpha) {
     			break;
     		}
@@ -78,28 +105,18 @@ public class MiniMaxPruning implements SearchAlgorithm {
     	return val;
     }
 
+    /**
+     * @return the optimal path taken to reach the optimal next state
+     * */
     public HashMap<State, State> getOptimalPath() {
         return optimalMap;
     }
 
+    /**
+     * @return the graph tree constructed during searching for the optimal state
+     * */
     public HashMap<State, State[]> getGameTree() {
         return actionMap;
     }
-
-    public void printGameTree(State initialState) {
-        System.out.println(initialState.toString());
-        printSuccessors(initialState);
-    }
-
-    private void printSuccessors(State initialState) {
-        State[] successors = actionMap.get(initialState);
-        if(successors == null)
-            return;
-        for (State s: successors)
-            System.out.print(s.toString() + "\t");
-        for (State s: successors)
-            printSuccessors(s);
-    }
-
 
 }
