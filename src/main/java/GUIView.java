@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -69,8 +71,11 @@ public class GUIView {
 
     // initialize the board to be empty with white circles
     void buildBoard(){
+        Path whiteCirclePath = Paths.get("src", "main", "resources", "WhiteCircleImg.png");
+        ImageIcon whiteCircleImg = new ImageIcon();
+
         try {
-            ImageIcon whiteCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\resources\\WhiteCircleImg.png")));
+            whiteCircleImg.setImage(ImageIO.read(whiteCirclePath.toFile()));
             for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 7; j++) {
                     JLabel tempLabel = new JLabel(whiteCircleImg);
@@ -78,7 +83,9 @@ public class GUIView {
                     boardPanel.add(tempLabel);
                 }
             }
-        }catch (Exception ignored){}
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     // attach the listeners to handle ui actions, taking input, executing action, and swapping ui views

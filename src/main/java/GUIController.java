@@ -1,6 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class GUIController {
 
@@ -13,9 +14,14 @@ public class GUIController {
     private ImageIcon yellowCircleImg;
 
     public GUIController(GUIView guiView, int maxDepth, boolean withPruning){
+        this.redCircleImg = new ImageIcon();
+        this.yellowCircleImg = new ImageIcon();
+        Path redCircleImgPath = Paths.get("src", "main", "resources", "RedCircleImg.png");
+        Path yellowCircleImgPath = Paths.get("src", "main", "resources", "YellowCircleImg.png");
+
         try{
-            this.redCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\resources\\RedCircleImg.png")));
-            this.yellowCircleImg = new ImageIcon(ImageIO.read(new File(".\\src\\main\\resources\\YellowCircleImg.png")));
+            this.redCircleImg.setImage(ImageIO.read(redCircleImgPath.toFile()));
+            this.yellowCircleImg.setImage(ImageIO.read(yellowCircleImgPath.toFile()));
         }
         catch (Exception ignored){}
         this.guiView = guiView;
